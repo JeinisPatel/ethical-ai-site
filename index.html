@@ -217,10 +217,9 @@
   @media (max-width:600px){ .about{grid-template-columns:1fr;gap:24px;} }
   .portrait{
     width:104px;height:128px;flex:0 0 auto;border-radius:4px;border:1px solid var(--line);
-    background:repeating-linear-gradient(135deg,#ededeb 0 9px,#e4e4e1 9px 18px);
-    display:flex;align-items:flex-end;justify-content:center;padding:8px;
+    object-fit:cover;object-position:center top;display:block;
+    filter:grayscale(100%);                 /* belt-and-suspenders: stays in palette even if source has colour */
   }
-  .portrait span{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:var(--faint);text-transform:uppercase;text-align:center;line-height:1.4;}
   .about .bio{font-size:1.12rem;line-height:1.62;color:var(--body);}
   .about .bio strong{color:var(--ink);font-weight:600;}
 

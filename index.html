@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Ethical AI Initiative</title>
+<meta name="description" content="The Ethical AI Initiative builds AI systems that reason within the rules they operate under — legally aligned by design.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,300..600;1,8..60,300..500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ground:#F1F1F0;
+    --card:#FBFBFA;
+    --ink:#1B1B1A;
+    --body:#535351;
+    --muted:#6C6C69;
+    --faint:#929290;
+    --slate:#33424F;
+    --slate-strong:#222B33;
+    --line:#DAD9D6;
+    --accent:#8A2433;          /* deep red — the one accent: the "AI" + the apex ember */
+    --serif:'Source Serif 4', Georgia, 'Times New Roman', serif;
+    --ui:'IBM Plex Sans', system-ui, sans-serif;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --shadow-sm:0 1px 2px rgba(26,26,26,0.05), 0 1px 1px rgba(26,26,26,0.04);
+    --shadow-md:0 2px 10px -2px rgba(26,26,26,0.08), 0 1px 2px rgba(26,26,26,0.05);
+    --gutter:clamp(24px,6vw,88px);
+    --measure:34rem;
+  }
+
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{
+    margin:0;
+    background:var(--ground);
+    color:var(--body);
+    font-family:var(--serif);
+    font-size:18px;
+    line-height:1.7;
+    overflow:hidden;                 /* locked while the threshold is up */
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  body.entered{overflow:auto;}
+  ::selection{background:#E2E5E8;color:var(--slate-strong);}
+
+  a{color:var(--slate);text-decoration:none;}
+  a:hover{color:var(--slate-strong);}
+
+  .wrap{max-width:62rem;margin:0 auto;padding-left:var(--gutter);padding-right:var(--gutter);}
+
+  .eyebrow{
+    font-family:var(--mono);font-size:.72rem;font-weight:500;
+    letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin:0;
+  }
+  h1,h2,h3{font-family:var(--serif);font-weight:400;color:var(--ink);letter-spacing:-.01em;margin:0;}
+
+  /* the wordmark accent — appears wherever "Ethical AI Initiative" is set */
+  .ai{color:var(--accent);}
+
+  /* ============ THRESHOLD SPLASH ============ */
+  #splash{
+    position:fixed;inset:0;z-index:100;
+    background:var(--ground);
+    display:flex;align-items:center;justify-content:center;
+    padding:24px;text-align:center;cursor:pointer;
+    transition:opacity .9s ease, visibility .9s ease;
+  }
+  body.entered #splash{opacity:0;visibility:hidden;pointer-events:none;}
+  .splash-inner{display:flex;flex-direction:column;align-items:center;max-width:34rem;}
+  .splash-mark{
+    width:clamp(118px,18vw,168px);height:auto;margin-bottom:34px;color:var(--slate);
+    animation:mark-in 2.4s cubic-bezier(0.16,1,0.3,1) both;
+  }
+  .splash-mark .crest-paths{fill:var(--slate);}
+  /* the red works its way UP through the crest/circuitry, clipped to the mark's shape */
+  .rise-wash{mix-blend-mode:screen;}
+  .splash-mark .rise-band{animation:rise 9s ease-in-out 1.4s infinite;opacity:0;}
+  /* the ember swells at the peak as the light arrives */
+  .splash-mark .ember{transform-origin:354px 40px;animation:ember-beacon 9s ease-in-out 1.4s infinite;opacity:0;}
+  /* a gentle ring forms at the summit, expands, and fades */
+  .splash-mark .ring{transform-box:fill-box;transform-origin:center;animation:ring-form 9s ease-in-out 1.4s infinite;opacity:0;}
+  .splash-word{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(1.85rem,5.4vw,3.1rem);letter-spacing:-.02em;line-height:1.05;color:var(--ink);
+    animation:fade-up 1s ease .5s both;
+  }
+  .splash-line{
+    font-family:var(--serif);font-size:clamp(.98rem,2.2vw,1.18rem);line-height:1.5;
+    color:var(--muted);max-width:30rem;margin:18px 0 0;
+    animation:fade-up 1s ease .8s both;
+  }
+  .enter-btn{
+    margin-top:42px;background:none;border:none;cursor:pointer;
+    font-family:var(--ui);font-size:.82rem;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
+    color:var(--slate);display:inline-flex;align-items:center;gap:9px;padding:10px 6px;
+    transition:color .2s ease;animation:fade-up 1s ease 1.1s both;
+  }
+  .enter-btn:hover{color:var(--slate-strong);}
+  .enter-btn .arr{transition:transform .25s cubic-bezier(0.16,1,0.3,1);}
+  .enter-btn:hover .arr{transform:translateY(3px);}
+  .enter-btn:focus-visible{outline:2px solid var(--slate);outline-offset:4px;border-radius:2px;}
+
+  @keyframes mark-in{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+
+  /* the light rises from the base, through the circuitry, to the peak — then fades before looping */
+  @keyframes rise{
+    0%  {transform:translateY(60px); opacity:0;}
+    10% {opacity:.85;}
+    46% {opacity:.85;}
+    56% {transform:translateY(-520px); opacity:0;}
+    100%{transform:translateY(-520px); opacity:0;}
+  }
+  /* the apex ember: quiet while the light climbs, swells as it arrives, settles back */
+  @keyframes ember-beacon{
+    0%,42%  {opacity:.14;}
+    58%     {opacity:.66;}
+    70%     {opacity:.50;}
+    90%,100%{opacity:.14;}
+  }
+  /* the ring forms at the summit just after the ember swells, expands and softens away */
+  @keyframes ring-form{
+    0%,52% {opacity:0;   transform:scale(.35);}
+    61%    {opacity:.52; transform:scale(.62);}
+    80%    {opacity:0;   transform:scale(1.18);}
+    100%   {opacity:0;   transform:scale(1.18);}
+  }
+  @keyframes fade-up{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ---- Top bar ---- */
+  .topbar{
+    position:sticky;top:0;z-index:20;
+    background:rgba(241,241,240,0.86);
+    backdrop-filter:saturate(120%) blur(8px);
+    -webkit-backdrop-filter:saturate(120%) blur(8px);
+    border-bottom:1px solid var(--line);
+  }
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:24px;height:64px;}
+  .brand{display:flex;align-items:center;gap:12px;}
+  .crest{width:24px;height:24px;flex:0 0 auto;color:var(--slate);}
+  .brand .name{font-family:var(--serif);font-size:1.06rem;color:var(--ink);letter-spacing:-.01em;white-space:nowrap;}
+  nav.links{display:flex;align-items:center;gap:28px;}
+  nav.links a{
+    font-family:var(--ui);font-size:.82rem;font-weight:500;color:var(--muted);
+    letter-spacing:.01em;transition:color .18s ease;
+  }
+  nav.links a:hover{color:var(--slate-strong);}
+  @media (max-width:720px){ nav.links{display:none;} }
+
+  /* ---- Masthead (text-only title page) ---- */
+  .masthead{padding:clamp(128px,24vh,260px) 0 clamp(112px,20vh,220px);}
+  .masthead .eyebrow{margin-bottom:36px;}
+  .masthead h1{
+    font-size:clamp(2.8rem,7vw,4.8rem);line-height:1.02;letter-spacing:-.025em;margin-bottom:30px;
+  }
+  .position{
+    font-family:var(--serif);font-size:clamp(1.3rem,2.6vw,1.7rem);line-height:1.45;
+    color:var(--body);max-width:30rem;margin:0;
+  }
+
+  /* ---- Principle band ---- */
+  .principle-band{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:clamp(84px,15vh,150px) 0;}
+  .principle{
+    margin:0 auto;max-width:24ch;text-align:center;
+    font-family:var(--serif);font-style:italic;font-size:clamp(1.5rem,3.6vw,2.5rem);
+    line-height:1.3;letter-spacing:-.015em;color:var(--ink);
+  }
+
+  /* ---- Section frame ---- */
+  section{padding:clamp(64px,11vh,120px) 0;border-top:1px solid var(--line);}
+  #work{border-top:none;}
+  .sec-head{margin-bottom:48px;max-width:var(--measure);}
+  .sec-head .eyebrow{margin-bottom:18px;}
+  .sec-head h2{font-size:clamp(1.7rem,3.4vw,2.3rem);line-height:1.12;}
+
+  .prose{max-width:var(--measure);}
+  .prose p{margin:0 0 1.4em;color:var(--body);}
+  .prose p:last-child{margin-bottom:0;}
+  .prose strong{color:var(--ink);font-weight:600;}
+
+  /* ---- The Work ---- */
+  .work-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media (max-width:860px){ .work-grid{grid-template-columns:1fr;max-width:32rem;} }
+  .work-card{
+    display:flex;flex-direction:column;background:var(--card);
+    border:1px solid var(--line);border-radius:6px;padding:28px 26px 24px;
+    box-shadow:var(--shadow-sm);
+    transition:transform .22s cubic-bezier(0.16,1,0.3,1),box-shadow .22s ease,border-color .22s ease;
+  }
+  .work-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-md);border-color:#cccbc8;}
+  .work-card h3{font-size:1.5rem;margin-bottom:12px;letter-spacing:0;}
+  .work-card p{font-size:1rem;line-height:1.55;color:var(--body);margin:0 0 28px;}
+  .work-card .open{
+    margin-top:auto;display:inline-flex;align-items:baseline;gap:8px;
+    font-family:var(--ui);font-size:.82rem;font-weight:500;color:var(--slate);
+  }
+  .work-card .open .arr{transition:transform .25s cubic-bezier(0.16,1,0.3,1);}
+  .work-card:hover .open{color:var(--slate-strong);}
+  .work-card:hover .open .arr{transform:translateX(3px);}
+
+  /* ---- Approach ---- */
+  #approach .approach-head{max-width:var(--measure);margin-bottom:36px;}
+  #approach .approach-head .eyebrow{margin-bottom:18px;}
+  #approach h2{font-size:clamp(1.7rem,3.4vw,2.3rem);line-height:1.16;letter-spacing:-.015em;}
+  #approach .prose{max-width:38rem;}
+
+  /* ---- Advisory ---- */
+  .offer{display:grid;grid-template-columns:repeat(2,1fr);gap:0 56px;max-width:46rem;}
+  @media (max-width:680px){ .offer{grid-template-columns:1fr;} }
+  .offer .item{padding:22px 0;border-top:1px solid var(--line);}
+  .offer .item .label{font-family:var(--ui);font-size:1.02rem;font-weight:500;color:var(--ink);margin:0 0 7px;letter-spacing:-.005em;}
+  .offer .item p{margin:0;font-size:.95rem;line-height:1.55;color:var(--muted);}
+
+  /* ---- About ---- */
+  .about{display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:start;max-width:46rem;}
+  @media (max-width:600px){ .about{grid-template-columns:1fr;gap:24px;} }
+  .portrait{
+    width:104px;height:128px;flex:0 0 auto;border-radius:4px;border:1px solid var(--line);
+    background:repeating-linear-gradient(135deg,#ededeb 0 9px,#e4e4e1 9px 18px);
+    display:flex;align-items:flex-end;justify-content:center;padding:8px;
+  }
+  .portrait span{font-family:var(--mono);font-size:.58rem;letter-spacing:.08em;color:var(--faint);text-transform:uppercase;text-align:center;line-height:1.4;}
+  .about .bio{font-size:1.12rem;line-height:1.62;color:var(--body);}
+  .about .bio strong{color:var(--ink);font-weight:600;}
+
+  /* ---- Contact ---- */
+  .contact .wrap{max-width:62rem;}
+  .contact-row{display:flex;flex-wrap:wrap;align-items:baseline;gap:18px 28px;}
+  .mailto{
+    font-family:var(--serif);font-size:clamp(1.5rem,4vw,2.4rem);color:var(--slate);
+    letter-spacing:-.01em;border-bottom:1px solid var(--line);padding-bottom:4px;
+    transition:color .2s ease,border-color .2s ease;
+  }
+  .mailto:hover{color:var(--slate-strong);border-color:var(--slate);}
+  .contact .sub{font-family:var(--ui);font-size:.9rem;color:var(--muted);margin:0 0 30px;max-width:var(--measure);}
+
+  /* ---- Footer ---- */
+  footer{border-top:1px solid var(--line);padding:40px 0;}
+  footer .wrap{display:flex;align-items:center;gap:12px;}
+  footer .crest{width:18px;height:18px;color:var(--faint);}
+  footer span{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+
+  @media (prefers-reduced-motion:reduce){
+    *{transition:none !important;}
+    .splash-mark{animation:none;opacity:1;transform:none;}
+    .splash-mark .rise-band{animation:none;opacity:0;}
+    .splash-mark .ember{animation:none;opacity:.34;}
+    .splash-mark .ring{animation:none;opacity:0;}
+    .splash-word,.splash-line,.enter-btn{animation:none;opacity:1;transform:none;}
+    #splash{transition:none;}
+  }
+</style>
+<noscript><style>#splash{display:none!important;} body{overflow:auto!important;}</style></noscript>
+</head>
+<body>
+
+  <!-- ============ THRESHOLD ============ -->
+  <div id="splash" role="dialog" aria-label="Ethical AI Initiative — enter">
+    <div class="splash-inner">
+      <svg class="splash-mark" viewBox="0 0 708 557" role="img" aria-label="Ethical AI Initiative">
+        <defs>
+          <radialGradient id="emberGlow" cx="50%" cy="50%" r="50%">
+            <stop offset="0%" stop-color="#B0303D" stop-opacity="1"/>
+            <stop offset="50%" stop-color="var(--accent)" stop-opacity="0.50"/>
+            <stop offset="100%" stop-color="var(--accent)" stop-opacity="0"/>
+          </radialGradient>
+          <linearGradient id="riseGlow" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stop-color="#B0303D" stop-opacity="0"/>
+            <stop offset="50%"  stop-color="#C23A48" stop-opacity="1"/>
+            <stop offset="100%" stop-color="#B0303D" stop-opacity="0"/>
+          </linearGradient>
+          <clipPath id="crestClip">
+            <path d="M254,484 L252,480 L246,476 L236,477 L228,487 L221,489 L123,489 L116,484 L109,483 L101,487 L98,492 L98,499 L104,507 L112,509 L118,507 L122,503 L230,503 L237,498 L245,499 L252,495 L254,491 Z"/>
+            <path d="M697,544 L547,311 L431,126 L429,126 L352,200 L336,201 L275,262 L276,263 L339,220 L346,222 L351,230 L366,264 L367,270 L316,345 L249,410 L148,410 L148,425 L255,425 L317,372 L318,393 L258,444 L145,444 L138,439 L128,440 L122,447 L122,456 L130,464 L138,464 L145,459 L262,459 L317,413 L317,435 L280,469 L280,528 L44,528 L354,48 L361,57 L407,128 L409,128 L423,114 L354,10 L10,545 L295,546 L295,477 L333,441 L335,375 L464,375 L535,458 L617,458 L663,527 L655,529 L527,529 L454,453 L447,451 L441,457 L441,460 L445,466 L505,528 L477,529 L414,464 L415,457 L409,449 L402,447 L394,450 L390,455 L390,466 L396,472 L403,474 L455,528 L374,529 L373,510 L370,504 L366,501 L367,411 L444,411 L518,491 L565,491 L570,496 L577,498 L584,496 L589,491 L590,482 L588,478 L580,472 L571,473 L566,477 L525,477 L450,396 L351,396 L350,500 L344,511 L344,546 L600,546 Z"/>
+            <path d="M420,150 L607,440 L607,443 L542,443 L471,359 L336,360 L334,358 L335,348 L388,270 L386,262 L364,214 Z"/>
+          </clipPath>
+        </defs>
+
+        <!-- 1 · base crest -->
+        <g class="crest-paths">
+          <path d="M254,484 L252,480 L246,476 L236,477 L228,487 L221,489 L123,489 L116,484 L109,483 L101,487 L98,492 L98,499 L104,507 L112,509 L118,507 L122,503 L230,503 L237,498 L245,499 L252,495 L254,491 Z"/>
+          <path d="M697,544 L547,311 L431,126 L429,126 L352,200 L336,201 L275,262 L276,263 L339,220 L346,222 L351,230 L366,264 L367,270 L316,345 L249,410 L148,410 L148,425 L255,425 L317,372 L318,393 L258,444 L145,444 L138,439 L128,440 L122,447 L122,456 L130,464 L138,464 L145,459 L262,459 L317,413 L317,435 L280,469 L280,528 L44,528 L354,48 L361,57 L407,128 L409,128 L423,114 L354,10 L10,545 L295,546 L295,477 L333,441 L335,375 L464,375 L535,458 L617,458 L663,527 L655,529 L527,529 L454,453 L447,451 L441,457 L441,460 L445,466 L505,528 L477,529 L414,464 L415,457 L409,449 L402,447 L394,450 L390,455 L390,466 L396,472 L403,474 L455,528 L374,529 L373,510 L370,504 L366,501 L367,411 L444,411 L518,491 L565,491 L570,496 L577,498 L584,496 L589,491 L590,482 L588,478 L580,472 L571,473 L566,477 L525,477 L450,396 L351,396 L350,500 L344,511 L344,546 L600,546 Z"/>
+          <path d="M420,150 L607,440 L607,443 L542,443 L471,359 L336,360 L334,358 L335,348 L388,270 L386,262 L364,214 Z"/>
+        </g>
+
+        <!-- 2 · the red rising up through the crest, clipped to its shape -->
+        <g class="rise-wash" clip-path="url(#crestClip)">
+          <rect class="rise-band" x="-40" y="430" width="788" height="200" fill="url(#riseGlow)"/>
+        </g>
+
+        <!-- 3 · the ember swelling at the summit -->
+        <ellipse class="ember" cx="354" cy="40" rx="82" ry="66" fill="url(#emberGlow)"/>
+
+        <!-- 4 · the ring forming at the peak -->
+        <circle class="ring" cx="354" cy="40" r="46" fill="none" stroke="#B0303D" stroke-width="7"/>
+      </svg>
+      <div class="splash-word">Ethical <span class="ai">AI</span> Initiative</div>
+      <p class="splash-line">Building AI systems that reason within the rules they operate under.</p>
+      <button id="enterBtn" class="enter-btn" type="button">Enter <span class="arr">↓</span></button>
+    </div>
+  </div>
+
+  <!-- ============ TOP BAR ============ -->
+  <header class="topbar">
+    <div class="wrap">
+      <div class="brand">
+        <svg class="crest" viewBox="0 0 708 557" fill="currentColor" aria-hidden="true">
+          <path d="M254,484 L252,480 L246,476 L236,477 L228,487 L221,489 L123,489 L116,484 L109,483 L101,487 L98,492 L98,499 L104,507 L112,509 L118,507 L122,503 L230,503 L237,498 L245,499 L252,495 L254,491 Z"/>
+          <path d="M697,544 L547,311 L431,126 L429,126 L352,200 L336,201 L275,262 L276,263 L339,220 L346,222 L351,230 L366,264 L367,270 L316,345 L249,410 L148,410 L148,425 L255,425 L317,372 L318,393 L258,444 L145,444 L138,439 L128,440 L122,447 L122,456 L130,464 L138,464 L145,459 L262,459 L317,413 L317,435 L280,469 L280,528 L44,528 L354,48 L361,57 L407,128 L409,128 L423,114 L354,10 L10,545 L295,546 L295,477 L333,441 L335,375 L464,375 L535,458 L617,458 L663,527 L655,529 L527,529 L454,453 L447,451 L441,457 L441,460 L445,466 L505,528 L477,529 L414,464 L415,457 L409,449 L402,447 L394,450 L390,455 L390,466 L396,472 L403,474 L455,528 L374,529 L373,510 L370,504 L366,501 L367,411 L444,411 L518,491 L565,491 L570,496 L577,498 L584,496 L589,491 L590,482 L588,478 L580,472 L571,473 L566,477 L525,477 L450,396 L351,396 L350,500 L344,511 L344,546 L600,546 Z"/>
+          <path d="M420,150 L607,440 L607,443 L542,443 L471,359 L336,360 L334,358 L335,348 L388,270 L386,262 L364,214 Z"/>
+        </svg>
+        <span class="name">Ethical <span class="ai">AI</span> Initiative</span>
+      </div>
+      <nav class="links">
+        <a href="#mission">Mission</a>
+        <a href="#work">The Work</a>
+        <a href="#approach">Approach</a>
+        <a href="#advisory">Advisory</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ============ MASTHEAD ============ -->
+  <div class="wrap masthead">
+    <p class="eyebrow">Applied research · AI for high-stakes decisions</p>
+    <h1>Ethical <span class="ai">AI</span> Initiative</h1>
+    <p class="position">Building AI systems that reason within the rules they operate under — across law, regulation, and professional practice.</p>
+  </div>
+
+  <!-- ============ MISSION ============ -->
+  <section id="mission">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Mission</p>
+        <h2>Reasoning within the rules, not prediction around them.</h2>
+      </div>
+      <div class="prose">
+        <p>Most applied AI optimises for prediction — what is likely to happen. The institutions making consequential decisions are rarely asking only what is likely. They are asking what is <strong>permitted</strong>, what is <strong>required</strong>, and what can be <strong>justified on the record</strong>. Those are questions of structured reasoning under uncertainty, and they do not reduce to pattern-matching.</p>
+        <p>The Initiative builds systems that make the steps of a difficult judgment explicit — the factors in play, the standards that bind them, and the points genuinely in dispute — so a human decision-maker can see the reasoning and remain accountable for it. The machine structures the problem; the person decides.</p>
+        <p>Aligned by design means the constraint comes first. Whether the governing frame is law, regulation, clinical guidance, or professional duty, accountability, transparency, and fairness belong in the reasoning structure of the system itself — not bolted on as a policy layer after deployment. A system that cannot show its working, or that quietly substitutes its own judgment for one a person is answerable for, is not fit for the institution that relies on it. Ours are built the other way round.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRINCIPLE ============ -->
+  <div class="principle-band">
+    <div class="wrap">
+      <p class="principle">The rules that govern a decision are a constraint to reason within — not a variable to optimise around.</p>
+    </div>
+  </div>
+
+  <!-- ============ THE WORK ============ -->
+  <section id="work">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">The Work</p>
+        <h2>Proof in practice. The first systems work within the law — the approach generalises beyond it.</h2>
+      </div>
+      <div class="work-grid">
+
+        <a class="work-card" href="https://polymath.ethical-ai.ca">
+          <h3>POLYMATH</h3>
+          <p>The parent portal that hosts the Initiative's systems.</p>
+          <span class="open">Open <span class="arr">→</span></span>
+        </a>
+
+        <a class="work-card" href="https://parvis.ethical-ai.ca">
+          <h3>P.A.R.V.I.S</h3>
+          <p>A Bayesian sentencing audit for Canadian Dangerous Offender law.</p>
+          <span class="open">Open <span class="arr">→</span></span>
+        </a>
+
+        <a class="work-card" href="https://ratio.ethical-ai.ca/app/intake.html">
+          <h3>RATIO</h3>
+          <p>Structured legal reasoning for the bench. It structures; it never decides.</p>
+          <span class="open">Open <span class="arr">→</span></span>
+        </a>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ APPROACH ============ -->
+  <section id="approach">
+    <div class="wrap">
+      <div class="approach-head">
+        <p class="eyebrow">Approach</p>
+        <h2>Legitimacy is built before scale, not bolted on after it.</h2>
+      </div>
+      <div class="prose">
+        <p>The Initiative is being built deliberately. Like the most durable public institutions, its foundation — doctrinal, methodological, and institutional — is laid before deployment, not after. That groundwork is the founder's doctoral research; a first release follows its completion.</p>
+        <p>The pace is the point. Systems that institutions will rely on for consequential decisions have to earn legitimacy before they scale, not retrofit it once they have. Building the social, legal, and political base in advance is what lets the work endure beyond a single moment or mandate — which is the only standard worth designing to.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ADVISORY ============ -->
+  <section id="advisory">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Advisory</p>
+        <h2>Working with institutions across sectors.</h2>
+      </div>
+      <div class="offer">
+        <div class="item">
+          <p class="label">Governance frameworks</p>
+          <p>Structures for deploying AI in high-stakes settings — public administration, health, finance, and regulated industry — designed to hold against legal and professional scrutiny, with privacy and data-protection obligations (GDPR, PIPEDA, HIPAA) treated as design constraints rather than compliance afterthoughts.</p>
+        </div>
+        <div class="item">
+          <p class="label">Transparent decision architecture</p>
+          <p>Systems where the reasoning is explicit and auditable — ethics built into the structure of the decision, not added as a policy layer. Where data is sensitive, work begins from zero-data and synthetic prototypes before any live deployment.</p>
+        </div>
+        <div class="item">
+          <p class="label">Independent expert review</p>
+          <p>Assessment of systems and procurement — examining what a tool reasons over, and what it leaves to the person.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ ABOUT ============ -->
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">About</p>
+        <h2>Direction.</h2>
+      </div>
+      <div class="about">
+        <div class="portrait"><span>Portrait</span></div>
+        <p class="bio">The Ethical AI Initiative is founded and led by <strong>Jeinis Patel</strong> — barrister, doctoral researcher in AI and Law at the University of London, and founder of the Initiative. The work began in law and extends to other rule-governed fields: building systems that institutions can stand behind.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ CONTACT ============ -->
+  <section id="contact" class="contact">
+    <div class="wrap">
+      <div class="sec-head">
+        <p class="eyebrow">Contact</p>
+        <h2>For institutions and partners.</h2>
+      </div>
+      <p class="sub">For governance review, deployment guidance, or a conversation about a specific brief, write directly.</p>
+      <div class="contact-row">
+        <a class="mailto" href="mailto:contact@ethical-ai.ca">contact@ethical-ai.ca</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FOOTER ============ -->
+  <footer>
+    <div class="wrap">
+      <svg class="crest" viewBox="0 0 708 557" fill="currentColor" aria-hidden="true">
+        <path d="M254,484 L252,480 L246,476 L236,477 L228,487 L221,489 L123,489 L116,484 L109,483 L101,487 L98,492 L98,499 L104,507 L112,509 L118,507 L122,503 L230,503 L237,498 L245,499 L252,495 L254,491 Z"/>
+        <path d="M697,544 L547,311 L431,126 L429,126 L352,200 L336,201 L275,262 L276,263 L339,220 L346,222 L351,230 L366,264 L367,270 L316,345 L249,410 L148,410 L148,425 L255,425 L317,372 L318,393 L258,444 L145,444 L138,439 L128,440 L122,447 L122,456 L130,464 L138,464 L145,459 L262,459 L317,413 L317,435 L280,469 L280,528 L44,528 L354,48 L361,57 L407,128 L409,128 L423,114 L354,10 L10,545 L295,546 L295,477 L333,441 L335,375 L464,375 L535,458 L617,458 L663,527 L655,529 L527,529 L454,453 L447,451 L441,457 L441,460 L445,466 L505,528 L477,529 L414,464 L415,457 L409,449 L402,447 L394,450 L390,455 L390,466 L396,472 L403,474 L455,528 L374,529 L373,510 L370,504 L366,501 L367,411 L444,411 L518,491 L565,491 L570,496 L577,498 L584,496 L589,491 L590,482 L588,478 L580,472 L571,473 L566,477 L525,477 L450,396 L351,396 L350,500 L344,511 L344,546 L600,546 Z"/>
+        <path d="M420,150 L607,440 L607,443 L542,443 L471,359 L336,360 L334,358 L335,348 L388,270 L386,262 L364,214 Z"/>
+      </svg>
+      <span>Ethical AI Initiative · 2026</span>
+    </div>
+  </footer>
+
+  <script>
+    (function () {
+      var splash = document.getElementById('splash');
+      var enter  = document.getElementById('enterBtn');
+      if (!splash) return;
+      function dismiss() {
+        if (document.body.classList.contains('entered')) return;
+        document.body.classList.add('entered');
+      }
+      if (enter) {
+        enter.addEventListener('click', function (e) { e.stopPropagation(); dismiss(); });
+        try { enter.focus({ preventScroll: true }); } catch (e) { }
+      }
+      splash.addEventListener('click', dismiss);
+      document.addEventListener('keydown', function (e) {
+        if (document.body.classList.contains('entered')) return;
+        if (e.key === 'Enter' || e.key === ' ' || e.key === 'Escape') { e.preventDefault(); dismiss(); }
+      });
+    })();
+  </script>
+
+</body>
+</html>
